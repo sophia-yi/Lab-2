@@ -1,8 +1,8 @@
 ---
 title: "BSMM-lab-2"
 subtitle: "BSMM 8740 Fall 2023"
-author: "Add your name here"
-date: "Add the date here"
+author: "sophia-yi"
+date: "25 September"
 format: html
 editor: visual
 self-contained: true
@@ -18,11 +18,40 @@ the_tate <- readr::read_delim("data/the-tate-collection.csv", ";", escape_double
 the_tate_artists <- readr::read_csv("data/the-tate-artists.csv")
 ```
 
+```{r}
+library(magrittr)     # the pipe
+library(tidyverse)    # for data wrangling + visualization
+library(tidymodels)   # for modeling
+library(gt)           # for making display tables
+library(gtExtras)     # helper functions for beautiful tables
+library(DataExplorer) #
+```
+
+```{r}
+the_tate <- readr::read_delim("data/the-tate-collection.csv", ";", escape_double = FALSE, trim_ws = TRUE)
+the_tate_artists <- readr::read_csv("data/the-tate-artists.csv")
+```
+
+```{}
+```
+
 ## Exercises
 
 ### Exercise 1
 
-The `the_tate` dataset has \_\_\_ unique artists who worked from \_\_\_ to \_\_\_. The works were acquired between the years \_\_\_ and \_\_\_.
+The `the_tate` dataset has 3336 unique artists who worked from 1545 to 2012. The works were acquired between the years1823 and 2013.
+
+```{r}
+the_tate |> dplyr::summarise(
+  artist=length(unique(artist)),
+  min_year=min(year,na.rm = TRUE),
+  max_year=max(year,na.rm = TRUE),
+  min_acqyear=min(acquisitionYear,na.rm = TRUE),
+  max_acqyear=max(acquisitionYear,na.rm = TRUE),
+  
+)
+
+```
 
 ### Exercise 2
 
