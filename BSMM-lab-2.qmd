@@ -210,12 +210,93 @@ grouped_data
 
 ### Exercise 8
 
-The annual return in the SPX price in 2020 was \_\_\_%.
+The annual return in the SPX price in 2020 was \_-11.97\_\_%.
 
-The corresponding price volatility was \_\_\_%.
+The corresponding price volatility was \_35.07\_\_%.
+
+```{r}
+library(readr)
+library(dplyr)
+
+# Read the historical price data with explicit date format
+spx_data <- read_csv(
+  "SPX_HistoricalData_1692322132002.csv",
+  col_types = cols(
+    Date = col_datetime(format = "%m/%d/%Y"),  # Adjust the format as needed
+    `Close/Last` = col_double(),  # Use backticks for column name
+    .default = col_double()
+  )
+)
+
+# Add a column for the year of the transaction
+spx_data <- spx_data %>%
+  mutate(year = lubridate::year(Date))
+
+# Add a column for daily return (rd) - Using backticks for column name
+spx_data <- spx_data %>%
+  mutate(rd = (`Close/Last` / lag(`Close/Last`)) - 1)
+
+# Add a column for daily return variance
+spx_data <- spx_data %>%
+  mutate(return_variance = rd^2)
+
+# Group by year and compute annual returns and standard deviations
+annual_summary <- spx_data %>%
+  group_by(year) %>%
+  summarize(
+    annual_return = prod(1 + rd) - 1,
+    annual_std_dev = sqrt(sum(return_variance)),
+    .groups = "drop"
+  )
+
+# Show the annual summary
+annual_summary
+
+```
 
 ### Exercise 9
 
-The period volatility was \_\_\_.\_%
+The period volatility was \_\_\_\_%
+
+```{r}
+library(gt)
+
+# Create a data frame containing year, annual return, and annual volatility
+data <- data.frame(
+  year = c(2018, 2019, 2020, 2021, 2022, 2023),
+  annual_return = c(0.1354964, -0.2295440, -0.1196547, -0.2284783, 0.2542846, NA),
+  annual_std_dev = c(0.1211806, 0.1260414, 0.3507352, 0.1309710, 0.2416677, NA)
+)
+
+# Calculate the period volatility (standard deviation)
+period_variance <- sum(data$annual_std_dev^2, na.rm = TRUE)
+period_volatility <- sqrt(period_variance)
+
+# Create a gt table
+table <- gt(data) %>%
+  tab_header(
+    title = "SPX Price Summary",
+    subtitle = "Annual Returns and Volatility (2018-2023)"
+  ) %>%
+  cols_label(
+    year = "Year",
+    annual_return = "Annual Return (%)",
+    annual_std_dev = "Annual Volatility (%)"
+  ) %>%
+  fmt_number(
+    columns = c("annual_return", "annual_std_dev"),
+    decimals = 2
+  ) %>%
+  summary_rows(
+    groups = TRUE,
+    columns = c(annual_return, annual_std_dev),
+    fns = list("Period Return" = sum(annual_return, na.rm = TRUE), "Period Volatility" = period_volatility)
+  )
+
+# Print the formatted table
+print(table)
+
+
+```
 
 ### 
