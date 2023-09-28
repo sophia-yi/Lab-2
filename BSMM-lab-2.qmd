@@ -121,21 +121,92 @@ the_tate %>%
 
 ### Exercise 5
 
-There are \_\_ duplicate artist-title pairs
+There are \_23705\_ duplicate artist-title pairs
 
 ```{r}
+library(dplyr)
 
+# Select artist and title columns and count the number of rows
+count_all_rows <- the_tate %>%
+  select(artist, title) %>%
+  nrow()
+
+count_all_rows
+```
+
+```{r}
+# Select artist and title columns and count distinct pairs
+distinct_artist_title <- the_tate %>%
+  select(artist, title) %>%
+  distinct() %>%
+  nrow()
+
+distinct_artist_title
+```
+
+```{r}
+duplicated_count <- count_all_rows - distinct_artist_title
+
+duplicated_count
 ```
 
 ### Exercise 6
 
-The artist with the largest work in the tate collection is \_\_\_
+The artist with the largest work in the tate collection is Therrien, Robert.
 
-The artist with the smallest work in the collection is \_\_\_. The smallest work has area \_\_\_ $\text{cm}^2$
+The artist with the smallest work in the collection is Mesens, E.L.T.. The smallest work has area \_237\_\_ cm.
+
+```{r}
+library(dplyr)
+
+# Add a new column "area" with the calculated area
+the_tate <- the_tate %>%
+  mutate(area = width * height)
+
+# Select artist, title, and area, and remove NA values
+selected_data <- the_tate %>%
+  select(artist, title, area) %>%
+  drop_na()
+
+# Order the works by area in ascending order
+selected_data <- selected_data %>%
+  arrange(area)
+
+# Find the largest artwork
+largest_artwork <- selected_data %>%
+  slice_tail(n = 1)
+
+# Find the smallest artwork
+smallest_artwork <- selected_data %>%
+  slice_head(n = 1)
+
+# View the largest and smallest artworks
+print("Largest Artwork:")
+print(largest_artwork)
+
+print("Smallest Artwork:")
+print(smallest_artwork)
+
+```
 
 ### Exercise 7
 
-...
+```{r}
+library(dplyr)
+
+# Left join the_tate and the_tate_artists
+the_tate <- left_join(the_tate, the_tate_artists, by = c("artistId" = "id"))
+
+# Drop rows with NA gender values
+the_tate <- the_tate %>%
+  filter(!is.na(gender))
+# Group by gender
+grouped_data <- the_tate %>%
+  group_by(gender)
+
+# Show the resulting table
+grouped_data
+```
 
 ### Exercise 8
 
