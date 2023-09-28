@@ -32,7 +32,7 @@ the_tate <- readr::read_delim("data/the-tate-collection.csv", ";", escape_double
 the_tate_artists <- readr::read_csv("data/the-tate-artists.csv")
 ```
 
-```{}
+```         
 ```
 
 ## Exercises
@@ -46,7 +46,7 @@ the_tate |> dplyr::summarise(
   artist=length(unique(artist)),
   min_year=min(year,na.rm = TRUE),
   max_year=max(year,na.rm = TRUE),
-  min_acqyear=min(acquisitionYear,na.rm = TRUE),
+    min_acqyear=min(acquisitionYear,na.rm = TRUE),
   max_acqyear=max(acquisitionYear,na.rm = TRUE),
   
 )
