@@ -50,32 +50,82 @@ the_tate |> dplyr::summarise(
   max_acqyear=max(acquisitionYear,na.rm = TRUE),
   
 )
+```
 
+```{r}
+the_tate |> DataExplorer::introduce()
+```
+
+```{r}
+the_tate |> DataExplorer::plot_missing()
 ```
 
 ### Exercise 2
 
-How number of works with missing dates is \_\_.
+How number of works with missing dates is \_2583\_.
 
-The number of artists whose works have missing dates is \_\_.
+The number of artists whose works have missing dates is \_461\_.
 
 It would require resolving missing year data for only \_\_ artists resolve resolve at least 50% of the missing data.
 
-The missing year data likely to be classified as \_\_\_\_.
+The missing year data likely to be classified as \_MAR\_\_\_.
+
+```{r}
+the_tate |> dplyr::filter(is.na(year)) |> dplyr::distinct(title)
+```
+
+```{r}
+the_tate |> dplyr::filter(is.na(year)) |> dplyr::distinct(artist)
+
+```
+
+```{r}
+the_tate |> dplyr::filter(is.na(year))
+
+#table(qaz$artist) |> tibble::tibble()
+```
 
 ### Exercise 3
 
-The artist with the most works in the Tate collection is \_\_\_.
+The artist with the most works in the Tate collection is \_Turner\_\_.
 
-The artist with the tenth-most works in the Tate collection is \_\_\_.
+The artist with the tenth-most works in the Tate collection is \_Warhol\_\_.
+
+```{r}
+the_tate |> dplyr::group_by(artist) |>
+dplyr::mutate(n=dplyr::n()) |>
+  dplyr::select(artist,n) |> 
+  dplyr::arrange(desc(n)) |>
+  dplyr::distinct() |> 
+  dplyr::ungroup() |> 
+  dplyr::slice(c(1,10))
+```
 
 ### Exercise 4
 
-The artist with the greatest number of works in the Tate collection represent \_\_\_% of the total number of works
+The artist with the greatest number of works in the Tate collection represent \_56.91970\_\_% of the total
+
+```{r}
+the_tate %>%
+  dplyr::group_by(artist) %>%
+  dplyr::mutate(works_count = dplyr::n()) %>%
+  dplyr::select(artist, works_count) %>%
+  dplyr::arrange(desc(works_count)) %>%
+  dplyr::distinct() %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(
+    total = sum(works_count),
+    pct = works_count / total
+  )
+```
 
 ### Exercise 5
 
 There are \_\_ duplicate artist-title pairs
+
+```{r}
+
+```
 
 ### Exercise 6
 
